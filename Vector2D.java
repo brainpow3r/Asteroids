@@ -1,0 +1,46 @@
+package com.company;
+
+public class Vector2D {
+
+    private double x, y;
+
+    public Vector2D(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Vector2D() {
+        this(0, 0);
+    }
+
+    public void addVector(Vector2D vec) {
+        x += vec.getX();
+        y += vec.getY();
+    }
+
+    public void addVector(double x, double y) {
+        this.x += x;
+        this.y += y;
+    }
+
+    @Override
+    public String toString() {
+        return (x + "; " + y);
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+}

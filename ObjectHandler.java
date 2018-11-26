@@ -5,18 +5,20 @@ import java.util.LinkedList;
 
 public class ObjectHandler {
 
-    LinkedList<GameObject> myObjects = new LinkedList<GameObject>();
+    public static LinkedList<GameObject> myObjects = new LinkedList<>();
 
+    // update function for all gameObjects
     public void tick() {
         for(int i = 0; i < myObjects.size(); i++) {
 
             GameObject tempObject = myObjects.get(i);
             tempObject.tick();
-
+            tempObject.ensureNotGoingOffScreen();
 
         }
     }
 
+    // render function for all game gameObject
     public void render(Graphics g) {
         for(int i = 0; i < myObjects.size(); i++) {
 
@@ -27,11 +29,18 @@ public class ObjectHandler {
     }
 
     public void addObject(GameObject o){
-        this.myObjects.add(o);
+        myObjects.add(o);
     }
 
     public void removeObject(GameObject o){
         this.myObjects.remove(o);
+    }
+
+    public void removeObjects(){
+        for (int i = 0; i < myObjects.size(); i++) {
+            myObjects.remove();
+        }
+
     }
 
 }
