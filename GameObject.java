@@ -1,66 +1,66 @@
 package com.company;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public abstract class GameObject {
 
-    protected double xPos, yPos;                    //Object's position on screen
-    protected double xVel, yVel;                    //Object's vertical and horizontal velocities
+    protected BufferedImage image;
+    protected Vector2D pos;                    //Object's position on screen
+    protected Vector2D vel;                    //Object's vertical and horizontal velocities
 
     public GameObject(double x, double y, double x_Vel, double y_Vel) {
-        this.xPos = x;
-        this.yPos = y;
-        this.xVel = x_Vel;
-        this.yVel = y_Vel;
+        pos = new Vector2D(x, y);
+        vel = new Vector2D(x_Vel, y_Vel);
     }
 
     public GameObject() {
-        this.xPos = 0.0;
-        this.yPos = 0.0;
-        this.xVel = 0.0;
-        this.yVel = 0.0;
+        pos = new Vector2D(0, 0);
+        vel = new Vector2D(0, 0);
     }
 
-    // this shit updates objects arguments like position, speed, etc.
+    // this updates objects arguments like position, speed, etc.
     public abstract void tick();
 
     // this one render updated objects to screen
     public abstract void render(Graphics g);
 
+    // method to ensure, that once object goes outside the screen, it respawns in the opposite side
+    public abstract void ensureNotGoingOffScreen();
+
+    // this one's here just for the sake of requirements
     public String toString() {
-        return "Postition: " + xPos + ";" + yPos + "    Velocity(x;y): " + xVel + ";" + yVel + "\n";
+        return "Postition: " + pos.getX() + ";" + pos.getY() + "    Velocity(x;y): " + vel.getX() + ";" + vel.getY() + "\n";
     }
 
     // GETTERS / SETTERS
-    public double getxPos() {
-        return xPos;
-    }
+    public double getxPos() { return pos.getX(); }
 
     public void setxPos(double xPos) {
-        this.xPos = xPos;
+        pos.setX(xPos);
     }
 
     public double getyPos() {
-        return yPos;
+        return pos.getY();
     }
 
     public void setyPos(double yPos) {
-        this.yPos = yPos;
+        pos.setY(yPos);
     }
 
     public double getxVel() {
-        return xVel;
+        return vel.getX();
     }
 
     public void setxVel(double xVel) {
-        this.xVel = xVel;
+        vel.setX(xVel);
     }
 
     public double getyVel() {
-        return yVel;
+        return vel.getY();
     }
 
     public void setyVel(double yVel) {
-        this.yVel = yVel;
+        vel.setY(yVel);
     }
 }
