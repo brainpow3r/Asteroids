@@ -1,10 +1,13 @@
 package com.company;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Vector2D {
 
-    private double x, y;
+    private int x, y;
 
-    public Vector2D(double x, double y) {
+    public Vector2D(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -14,8 +17,14 @@ public class Vector2D {
     }
 
     public void addVector(Vector2D vec) {
-        x += vec.getX();
-        y += vec.getY();
+
+        List<Integer> xV = Arrays.asList(x, vec.getX());
+        List<Integer> yV = Arrays.asList(y, vec.getY());
+
+        xV.stream().reduce((x, y) -> x+y).ifPresent(s -> this.x = s);
+        yV.stream().reduce((x, y) -> x+y).ifPresent(s -> this.y = s);
+        //x += vec.getX();
+        //y += vec.getY();
     }
 
     public void addVector(double x, double y) {
@@ -28,19 +37,19 @@ public class Vector2D {
         return (x + "; " + y);
     }
 
-    public double getX() {
+    public int getX() {
         return x;
     }
 
-    public double getY() {
+    public int getY() {
         return y;
     }
 
-    public void setX(double x) {
+    public void setX(int x) {
         this.x = x;
     }
 
-    public void setY(double y) {
+    public void setY(int y) {
         this.y = y;
     }
 }

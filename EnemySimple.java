@@ -4,11 +4,18 @@ import java.awt.*;
 
 public class EnemySimple extends GameObject {
 
-    public EnemySimple(double x, double y, double x_Vel, double y_Vel) {
+    private int eWidth = 31;
+    private int eHeight = 32;
+
+    public EnemySimple(int x, int y, int x_Vel, int y_Vel) {
         pos = new Vector2D(x, y);
         vel = new Vector2D(x_Vel, y_Vel);
 
-        image = ImageLoader.getImage(3);
+        try {
+            canImageBeApplied(3);
+        } catch (ImageApplyingException e) {
+            image = ImageLoader.getDefaultImage();
+        }
 
     }
 
@@ -16,6 +23,11 @@ public class EnemySimple extends GameObject {
         pos = new Vector2D(0, 0);
         vel = new Vector2D(0, 0);
 
+    }
+
+    @Override
+    public Rectangle getBounds() {
+        return new Rectangle((int)getxPos(), (int)getyPos(), eWidth, eHeight);
     }
 
     @Override
