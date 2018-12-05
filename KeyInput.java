@@ -2,10 +2,13 @@ package com.company;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.stream.Collectors;
 
 public class KeyInput extends KeyAdapter {
     private ObjectHandler handler;
     private GameObject player;
+    public static int mouseClick_x;
+    public static int mouseClick_y;
 
     public KeyInput (ObjectHandler handler){
         this.handler = handler;
@@ -32,7 +35,19 @@ public class KeyInput extends KeyAdapter {
         }
 
 
-        if (key == KeyEvent.VK_ESCAPE) System.exit(1);
+        if (key == KeyEvent.VK_ESCAPE) {
+            handler.removeObjects();
+            System.exit(1);
+        }
+
+        // parodymui, kad objektu istrynimas veikia
+        /*if (key == KeyEvent.VK_Y) {
+            try {
+                System.out.println(handler.myProjectiles.get((long)10).toString());
+            } catch (NullPointerException exc) {
+                System.out.println("index " + 10 + ": null");
+            }
+        }*/
     }
 
     public void keyReleased(KeyEvent e) {
@@ -54,15 +69,14 @@ public class KeyInput extends KeyAdapter {
         }
     }
 
+    public void shoot(int x, int y) {
+
+        handler.addProjectile(player.getxPos(), player.getyPos(), x, y);
+    }
+
     private void findPlayer () {
 
-        for(int i = 0; i < handler.myObjects.size(); i++) {
-            if (handler.myObjects.get(i) instanceof Player) {
-                player = handler.myObjects.get(i);
-            } else if ((i == handler.myObjects.size() - 1) && (player == null)) {
-                System.out.println("object \"Player\" was not found!\n");
-            }
-        }
+        player = handler.myObjects.stream().filter(obj -> obj instanceof Player).collect(Collectors.toList()).get(0);
 
     }
 }

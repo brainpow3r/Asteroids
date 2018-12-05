@@ -9,7 +9,7 @@ public abstract class GameObject {
     protected Vector2D pos;                    //Object's position on screen
     protected Vector2D vel;                    //Object's vertical and horizontal velocities
 
-    public GameObject(double x, double y, double x_Vel, double y_Vel) {
+    public GameObject(int x, int y, int x_Vel, int y_Vel) {
         pos = new Vector2D(x, y);
         vel = new Vector2D(x_Vel, y_Vel);
     }
@@ -28,39 +28,51 @@ public abstract class GameObject {
     // method to ensure, that once object goes outside the screen, it respawns in the opposite side
     public abstract void ensureNotGoingOffScreen();
 
+    // method used to detect collisions
+    public abstract Rectangle getBounds();
+
     // this one's here just for the sake of requirements
     public String toString() {
         return "Postition: " + pos.getX() + ";" + pos.getY() + "    Velocity(x;y): " + vel.getX() + ";" + vel.getY() + "\n";
     }
 
-    // GETTERS / SETTERS
-    public double getxPos() { return pos.getX(); }
+    // used to throw exceptions
+    public void canImageBeApplied(int index) throws ImageApplyingException {
+        try {
+            image = ImageLoader.getImage(index);
+        } catch (ImageApplyingException e) {
+            throw e;
+        }
+    }
 
-    public void setxPos(double xPos) {
+    // GETTERS / SETTERS
+    public int getxPos() { return pos.getX(); }
+
+    public void setxPos(int xPos) {
         pos.setX(xPos);
     }
 
-    public double getyPos() {
+    public int getyPos() {
         return pos.getY();
     }
 
-    public void setyPos(double yPos) {
+    public void setyPos(int yPos) {
         pos.setY(yPos);
     }
 
-    public double getxVel() {
+    public int getxVel() {
         return vel.getX();
     }
 
-    public void setxVel(double xVel) {
+    public void setxVel(int xVel) {
         vel.setX(xVel);
     }
 
-    public double getyVel() {
+    public int getyVel() {
         return vel.getY();
     }
 
-    public void setyVel(double yVel) {
+    public void setyVel(int yVel) {
         vel.setY(yVel);
     }
 }

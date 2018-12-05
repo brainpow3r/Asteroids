@@ -4,17 +4,28 @@ import java.awt.*;
 
 public class EnemySpecial extends EnemySimple {
 
-    public EnemySpecial(double x, double y, double x_Vel, double y_Vel) {
+    private int esWidth = 16;
+    private int esHeight = 16;
+
+    public EnemySpecial(int x, int y, int x_Vel, int y_Vel) {
         pos = new Vector2D(x, y);
         vel = new Vector2D(x_Vel, y_Vel);
 
-        image = ImageLoader.getImage(4);
+        try {
+            canImageBeApplied(4);
+        } catch (ImageApplyingException e){
+            image = ImageLoader.getDefaultImage();
+        }
     }
 
     public EnemySpecial() {
         pos = new Vector2D(0, 0);
         vel = new Vector2D(0, 0);
+    }
 
+    @Override
+    public Rectangle getBounds() {
+        return new Rectangle((int)getxPos(), (int)getyPos(), esWidth, esHeight);
     }
 
     @Override
@@ -25,7 +36,7 @@ public class EnemySpecial extends EnemySimple {
     @Override
     // override this method, so that special enemies can bounce back from walls
     public void ensureNotGoingOffScreen() {
-        double tempVel;
+        int tempVel;
 
         if (getyPos() <= 0 || getyPos() >= 590) {
             tempVel = (-1) * getyVel();
@@ -35,15 +46,6 @@ public class EnemySpecial extends EnemySimple {
         if (getxPos() <= 0 || getxPos() >= 770) {
             tempVel = (-1) * getxVel();
             setxVel(tempVel);
-        }
-
-    }
-
-    public void destroy() {
-
-        if ((pos.getX() > 800) || (pos.getX() < 0) && (pos.getY() > 640) || pos.getY() < 0){
-            pos = new Vector2D(10000, 10000);
-            vel = new Vector2D(0, 0);
         }
 
     }
