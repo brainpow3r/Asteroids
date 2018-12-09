@@ -8,16 +8,22 @@ public class ObjectHandler {
     private long projectileCount = 0;
 
     public static LinkedList<GameObject> myObjects = new LinkedList<>();
-    public HashMap<Long, Projectile> myProjectiles = new HashMap<>();
+    public TreeMap<Long, Projectile> myProjectiles = new TreeMap<>();
 
     // update function for all gameObjects
     public synchronized void tick() {
 
-        synchronized(this) {
-            myObjects.forEach(x -> {
-                x.tick();
-                x.ensureNotGoingOffScreen();
-            });
+
+        if (myObjects.size() > 1) {
+            synchronized (this) {
+                myObjects.parallelStream().forEach(x -> {
+                    x.tick();
+                    x.ensureNotGoingOffScreen();
+                });
+            }
+        } else {
+            HUD.gameLevel++;
+            spawnEnemies(HUD.gameLevel + 4, HUD.gameLevel + 2);
         }
 
 
@@ -26,6 +32,7 @@ public class ObjectHandler {
             myProjectiles.forEach((k, v) -> {
                 v.tick();
                 v.setOffScreen(v.hasGoneOffScreen());
+
             });
 
             myProjectiles.entrySet().removeIf(e -> e.getValue().getOffScreen());
@@ -41,8 +48,11 @@ public class ObjectHandler {
             synchronized(this) {
                 myObjects.parallelStream().forEach(x -> x.render(g));
 
+                /*for (long i = 0; i < myProjectiles.size(); i++) {
+                    myProjectiles.get(i).render(g);
+                }*/
                 myProjectiles.forEach((k, v) -> {
-                    v.render(g);
+                   v.render(g);
                 });
             }
 
@@ -90,7 +100,6 @@ public class ObjectHandler {
             //removing objects
             myObjects.clear();
         }
-
 
     }
 

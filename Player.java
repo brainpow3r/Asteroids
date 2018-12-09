@@ -60,7 +60,7 @@ public class Player extends GameObject {
         long currTime = System.currentTimeMillis();
         long diff = currTime - timestamp;
 
-        if (immune && (diff >= 3500)) {
+        if (immune && (diff >= 2000)) {
             try {
                 canImageBeApplied(1);
             } catch (ImageApplyingException e) {
@@ -122,6 +122,19 @@ public class Player extends GameObject {
 
     }
 
-
+    public void reset(ObjectHandler h) {
+        setxPos((Game.WIDTH/2-16));
+        setyPos((Game.HEIGHT/2-16));
+        setxVel(0);
+        setyVel(0);
+        try {
+            canImageBeApplied(5);
+        } catch (ImageApplyingException e) {
+            e.printStackTrace();
+            image = ImageLoader.getDefaultImage();
+        }
+        handler = h;
+        immune = true;
+    }
 
 }

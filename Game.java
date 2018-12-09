@@ -1,15 +1,9 @@
 package com.company;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
 
 public class Game extends Canvas implements Runnable {
 
@@ -19,15 +13,24 @@ public class Game extends Canvas implements Runnable {
     private HUD gameHUD;
     private BufferedImage backgroundImage;
     private Thread thread;
-    public Player player;
+    private MainMenu menu;
     private boolean running = false;
-    public boolean increaseScore = false;
-    public static boolean playerDead = false;
     private long scoreTimer;
+    public static enum STATE {
+        MENU,
+        GAME,
+        HIGHSCORES,
+        GAMEOVER
+    };
+    public static STATE gameState = STATE.MENU;
+    public Player player;
+    public boolean increaseScore = false;
+    public static boolean restart = false;
     public static final int WIDTH = 800, HEIGHT = 640;
 
 
     public Game() {
+        menu = new MainMenu();
         objHandler = new ObjectHandler();
         imgLoader = new ImageLoader();
         gameHUD = new HUD();
@@ -41,7 +44,7 @@ public class Game extends Canvas implements Runnable {
         } catch (ImageApplyingException e) {
             e.printStackTrace();
         }
-        gameKeyInput = new KeyInput(objHandler);
+        gameKeyInput = new KeyInput(objHandler, gameHUD);
         this.addKeyListener(gameKeyInput);
 
 
@@ -66,27 +69,34 @@ public class Game extends Canvas implements Runnable {
             e.printStackTrace();
         }
         objHandler.removeObjects();
+
     }
 
     private void tick() {
-
-        if (increaseScore) {
-            scoreTimer = System.currentTimeMillis();
-            increaseScore = false;
+        if (restart) {
+            restart();
+            restart = false;
         }
-        try {
-            synchronized(this) {
-                objHandler.tick();
+
+        if (gameState == STATE.GAME) {
+
+            if (increaseScore) {
+                scoreTimer = System.currentTimeMillis();
+                increaseScore = false;
             }
-            gameHUD.tick(scoreTimer, this);
-        } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                synchronized (this) {
+                    objHandler.tick();
+                }
+                gameHUD.tick(scoreTimer, this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
 
     private synchronized void render() {
-
         BufferStrategy buffStrat = this.getBufferStrategy();
 
         if (buffStrat == null) {
@@ -95,17 +105,64 @@ public class Game extends Canvas implements Runnable {
         }
 
         Graphics g = buffStrat.getDrawGraphics();
-        g.drawImage(backgroundImage, 0, 0, Color.black, null);
 
-        synchronized(this) {
-            objHandler.render(g);
-            gameHUD.render(g);
+        if (gameState == STATE.GAME) {
+            try {
+                backgroundImage = ImageLoader.getImage(0);
+            } catch (ImageApplyingException e) {
+                e.printStackTrace();
+            }
+            g.drawImage(backgroundImage, 0, 0, Color.black, null);
+            synchronized (this) {
+                objHandler.render(g);
+                gameHUD.render(g);
+            }
+
+        } else if (gameState == STATE.MENU) {
+            try {
+                backgroundImage = ImageLoader.getImage(7);
+            } catch (ImageApplyingException e) {
+                e.printStackTrace();
+            }
+            g.drawImage(backgroundImage, 0, 0, Color.black, null);
+            menu.render(g);
+        } else if (gameState == STATE.GAMEOVER) {
+            Graphics2D g2d = (Graphics2D) g;
+            Font fnt0 = new Font("arial", Font.BOLD, 36);
+            g.setFont(fnt0);
+            g.setColor(Color.white);
+            Rectangle playAgain = new Rectangle (290, 260, 250, 50);
+            Rectangle exit = new Rectangle (290, 320, 250, 50);
+
+            try {
+                backgroundImage = ImageLoader.getImage(7);
+            } catch (ImageApplyingException e) {
+                e.printStackTrace();
+            }
+
+            g2d.draw(playAgain);
+            g.drawString("PLAY AGAIN?", playAgain.x+4, playAgain.y+37);
+            g2d.draw(exit);
+            g.drawString("EXIT", playAgain.x+78, playAgain.y+97);
+
         }
-
 
         g.dispose();
         buffStrat.show();
+    }
 
+    public void restart() {
+        try {
+            backgroundImage = ImageLoader.getImage(0);
+        } catch (ImageApplyingException e) {
+            e.printStackTrace();
+        }
+        objHandler.removeObjects();
+        player.reset(objHandler);
+        objHandler.addObject(player);
+        objHandler.spawnEnemies(4, 2);
+        gameHUD.reset();
+        gameState = STATE.GAME;
     }
 
     public void run() {
@@ -119,6 +176,7 @@ public class Game extends Canvas implements Runnable {
         long timer = System.currentTimeMillis();
         int frames = 0;
         scoreTimer = System.currentTimeMillis();
+
         while (running) {
 
 
