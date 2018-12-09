@@ -14,7 +14,7 @@ public class ImageLoader {
     private String path = "C:\\Users\\brainpow3r\\Desktop\\JAVA\\AsteroidsIDE\\src\\com\\company\\sprites\\";
     private List<String> fileNames = Arrays.asList("background.png", "player.png", "lives.png",
                                   "enemy.png", "enemy_special.png", "player_immune.png",
-                                  "projectile.png");
+                                  "projectile.png", "menu_background.png");
     private LinkedList<String> absPath = new LinkedList<>();
 
     private static LinkedList<BufferedImage> images = new LinkedList<>();
@@ -50,6 +50,8 @@ public class ImageLoader {
         success = images.stream().allMatch(img -> img != null);
         if (success) {
             System.out.println("All images have been loaded successfully!");
+        } else {
+            System.out.println("Errors loading sprites");
         }
     }
 
